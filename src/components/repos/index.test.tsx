@@ -198,4 +198,18 @@ describe('UserReposList', () => {
 
     expect(screen.getByText(/Loading more repositories/i)).toBeInTheDocument();
   });
+
+  it('falls back to a default description when missing', () => {
+    const repo = createRepo(1, 1, { description: '' });
+    mockUseUserRepos.mockReturnValue(
+      defaultHookState({
+        data: { pages: [[repo]] },
+        repos: [repo],
+      })
+    );
+
+    render(<UserReposList username="octocat" />);
+
+    expect(screen.getByText(/No description available/i)).toBeInTheDocument();
+  });
 });
