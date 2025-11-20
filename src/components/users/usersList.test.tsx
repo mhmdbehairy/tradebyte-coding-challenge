@@ -34,6 +34,7 @@ const getProps = (
 describe('UserSearchResults', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    window.history.replaceState(null, '', '/');
   });
 
   it('shows loading state when searching', () => {
@@ -118,5 +119,35 @@ describe('UserSearchResults', () => {
     );
 
     expect(screen.getByText(/No users found/i)).toBeInTheDocument();
+  });
+
+  it('stores the expanded user in the URL params', async () => {
+    render(<UserSearchResults {...getProps()} />);
+
+    const toggle = screen.getByRole('button', { name: /user-1/i });
+    fireEvent.click(toggle);
+
+    expect(await screen.findByTestId('user-repos')).toHaveTextContent(
+      'Repos for user-1'
+    );
+
+    const paramsAfterExpand = new URLSearchParams(window.location.search);
+    expect(paramsAfterExpand.get('expanded')).toBe('user-1');
+
+    fireEvent.click(toggle);
+
+    await waitFor(() => {
+      expect(new URLSearchParams(window.location.search).get('expanded')).toBeNull();
+    });
+  });
+
+  it('restores expanded user state from the URL on mount', async () => {
+    window.history.replaceState(null, '', '/?expanded=user-2');
+
+    render(<UserSearchResults {...getProps()} />);
+
+    expect(await screen.findByTestId('user-repos')).toHaveTextContent(
+      'Repos for user-2'
+    );
   });
 });

@@ -1,6 +1,7 @@
-import { lazy, Suspense, useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
 import type { GithubUser } from '../../types/github';
 import RateLimitAlert from '../shared/rateLimitAlert';
+import { useSearchParamState } from '../../hooks/useSearchParamState';
 
 const UserReposList = lazy(() => import('../repos'));
 const MAX_VISIBLE_USERS = 5;
@@ -24,10 +25,11 @@ export const UserSearchResults = ({
   isError,
   error,
 }: UserSearchResultsProps) => {
-  const [expandedUser, setExpandedUser] = useState<{
-    id: number;
-    queryKey: string;
-  } | null>(null);
+  const [expandedLogin, setExpandedLogin] = useSearchParamState(
+    'expanded',
+    ''
+  );
+  const queryKeyRef = useRef(trimmedQuery);
   const visibleUsers = useMemo(
     () => users.slice(0, MAX_VISIBLE_USERS),
     [users]
@@ -36,21 +38,22 @@ export const UserSearchResults = ({
   const showEmptyState =
     trimmedQuery && !isLoading && !isError && visibleUsers.length === 0;
 
-  const handleToggle = (userId: number) => {
-    setExpandedUser((current) => {
-      const currentId =
-        current && current.queryKey === trimmedQuery ? current.id : null;
+  useEffect(() => {
+    if (queryKeyRef.current === trimmedQuery) {
+      return;
+    }
 
-      if (currentId === userId) {
-        return null;
-      }
+    queryKeyRef.current = trimmedQuery;
 
-      return { id: userId, queryKey: trimmedQuery };
-    });
+    if (expandedLogin) {
+      setExpandedLogin('', { history: 'replace' });
+    }
+  }, [expandedLogin, setExpandedLogin, trimmedQuery]);
+
+  const handleToggle = (userLogin: string) => {
+    const nextValue = expandedLogin === userLogin ? '' : userLogin;
+    setExpandedLogin(nextValue, { history: 'push' });
   };
-
-  const expandedUserId =
-    expandedUser?.queryKey === trimmedQuery ? expandedUser.id : null;
 
   return (
     <div className="mt-6 space-y-3">
@@ -79,7 +82,7 @@ export const UserSearchResults = ({
       {showResults && (
         <ul className="space-y-3">
           {visibleUsers.map((user) => {
-            const isExpanded = expandedUserId === user.id;
+            const isExpanded = expandedLogin === user.login;
             const detailsId = `user-repos-${user.id}`;
 
             return (
@@ -88,7 +91,7 @@ export const UserSearchResults = ({
                 user={user}
                 isExpanded={isExpanded}
                 detailsId={detailsId}
-                onToggle={() => handleToggle(user.id)}
+                onToggle={() => handleToggle(user.login)}
               />
             );
           })}
