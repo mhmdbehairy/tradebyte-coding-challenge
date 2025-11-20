@@ -3,7 +3,10 @@ import { Layout, SearchPanel } from './components';
 import { useSearchParamState } from './hooks/useSearchParamState';
 
 const App = () => {
-  const [query, setQueryParam, queryUpdateSource] = useSearchParamState('q', '');
+  const [query, setQueryParam, queryUpdateSource] = useSearchParamState(
+    'q',
+    ''
+  );
 
   const handleQueryChange = useCallback(
     (value: string) => {

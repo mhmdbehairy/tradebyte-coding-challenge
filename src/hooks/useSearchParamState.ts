@@ -43,7 +43,11 @@ const applyHistoryUpdate = (
   }
 
   const method = history === 'push' ? 'pushState' : 'replaceState';
-  window.history[method](window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
+  window.history[method](
+    window.history.state,
+    '',
+    `${url.pathname}${url.search}${url.hash}`
+  );
 };
 
 export const useSearchParamState = (
@@ -55,9 +59,8 @@ export const useSearchParamState = (
   SearchParamUpdateSource,
 ] => {
   const [value, setValue] = useState(() => readParamValue(key, defaultValue));
-  const [updateSource, setUpdateSource] = useState<SearchParamUpdateSource>(
-    'initial'
-  );
+  const [updateSource, setUpdateSource] =
+    useState<SearchParamUpdateSource>('initial');
 
   useEffect(() => {
     if (!isBrowser) {
@@ -80,7 +83,11 @@ export const useSearchParamState = (
         const nextValue =
           typeof action === 'function' ? action(current) : action;
         const normalized = nextValue ?? '';
-        applyHistoryUpdate(key, nextValue ?? null, options?.history ?? 'replace');
+        applyHistoryUpdate(
+          key,
+          nextValue ?? null,
+          options?.history ?? 'replace'
+        );
         return normalized;
       });
     },

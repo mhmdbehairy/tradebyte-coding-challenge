@@ -137,7 +137,9 @@ describe('UserSearchResults', () => {
     fireEvent.click(toggle);
 
     await waitFor(() => {
-      expect(new URLSearchParams(window.location.search).get('expanded')).toBeNull();
+      expect(
+        new URLSearchParams(window.location.search).get('expanded')
+      ).toBeNull();
     });
   });
 

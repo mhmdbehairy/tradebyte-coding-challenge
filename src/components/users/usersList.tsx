@@ -25,10 +25,7 @@ export const UserSearchResults = ({
   isError,
   error,
 }: UserSearchResultsProps) => {
-  const [expandedLogin, setExpandedLogin] = useSearchParamState(
-    'expanded',
-    ''
-  );
+  const [expandedLogin, setExpandedLogin] = useSearchParamState('expanded', '');
   const queryKeyRef = useRef(trimmedQuery);
   const visibleUsers = useMemo(
     () => users.slice(0, MAX_VISIBLE_USERS),
