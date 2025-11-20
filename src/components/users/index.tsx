@@ -13,12 +13,9 @@ export interface SearchPanelProps {
 export const SearchPanel = ({ query, onQueryChange }: SearchPanelProps) => {
   const debouncedQuery = useDebounce(query, 400);
   const trimmedQuery = debouncedQuery.trim();
-  const {
-    data: users = [],
-    isLoading,
-    isError,
-    error,
-  } = useSearchUsers({ query: debouncedQuery });
+  const { users, isLoading, isError, error } = useSearchUsers({
+    query: debouncedQuery,
+  });
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

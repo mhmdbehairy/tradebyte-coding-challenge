@@ -36,6 +36,7 @@ const createRepo = (
 
 const defaultHookState = (overrides?: Record<string, unknown>) => ({
   data: { pages: [[]] },
+  repos: [],
   isLoading: false,
   isError: false,
   error: null,
@@ -147,12 +148,13 @@ describe('UserReposList', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders repositories sorted by stargazers', () => {
+  it('renders repositories returned by the hook', () => {
     const lower = createRepo(1, 2, { name: 'repo-b' });
     const higher = createRepo(2, 5, { name: 'repo-a' });
     mockUseUserRepos.mockReturnValue(
       defaultHookState({
         data: { pages: [[lower, higher]] },
+        repos: [higher, lower],
       })
     );
 
@@ -168,6 +170,7 @@ describe('UserReposList', () => {
     mockUseUserRepos.mockReturnValue(
       defaultHookState({
         data: { pages: [[repo]] },
+        repos: [repo],
         hasNextPage: false,
         isFetchingNextPage: false,
       })
@@ -185,6 +188,7 @@ describe('UserReposList', () => {
     mockUseUserRepos.mockReturnValue(
       defaultHookState({
         data: { pages: [[repo]] },
+        repos: [repo],
         isFetchingNextPage: true,
         hasNextPage: true,
       })

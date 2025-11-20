@@ -25,6 +25,7 @@ describe('SearchPanel', () => {
     vi.clearAllMocks();
     mockUseSearchUsers.mockReturnValue({
       data: [],
+      users: [],
       isLoading: false,
       isError: false,
       error: null,
@@ -59,6 +60,7 @@ describe('SearchPanel', () => {
     ];
     mockUseSearchUsers.mockReturnValue({
       data: users,
+      users,
       isLoading: true,
       isError: true,
       error: new Error('Network'),

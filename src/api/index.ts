@@ -5,6 +5,8 @@ import type {
 } from '../types/github';
 
 export const GITHUB_API_BASE_URL = 'https://api.github.com';
+const SEARCH_PAGE_SIZE = 5;
+export const REPOS_PAGE_SIZE = 10;
 
 const githubToken = import.meta.env.PROD
   ? undefined
@@ -23,6 +25,18 @@ const withAuthHeaders = (init?: RequestInit): RequestInit | undefined => {
       Authorization: `Bearer ${githubToken}`,
     },
   };
+};
+
+const requestGithub = async <T>(
+  endpoint: string,
+  init?: RequestInit
+): Promise<T> => {
+  const response = await fetch(
+    `${GITHUB_API_BASE_URL}${endpoint}`,
+    withAuthHeaders(init)
+  );
+
+  return handleGithubResponse<T>(response);
 };
 
 export const handleGithubResponse = async <T>(
@@ -66,12 +80,9 @@ export const searchUsers = async (query: string): Promise<GithubUser[]> => {
   const trimmed = query.trim();
   if (!trimmed) return [];
 
-  const url = `${GITHUB_API_BASE_URL}/search/users?q=${encodeURIComponent(
-    trimmed
-  )}&per_page=5`;
-
-  const response = await fetch(url, withAuthHeaders());
-  const data = await handleGithubResponse<GithubSearchUsersResponse>(response);
+  const data = await requestGithub<GithubSearchUsersResponse>(
+    `/search/users?q=${encodeURIComponent(trimmed)}&per_page=${SEARCH_PAGE_SIZE}`
+  );
 
   return data.items;
 };
@@ -79,7 +90,7 @@ export const searchUsers = async (query: string): Promise<GithubUser[]> => {
 export const getUserRepos = async (
   username: string,
   page = 1,
-  perPage = 10
+  perPage = REPOS_PAGE_SIZE
 ): Promise<GithubRepo[]> => {
   const trimmed = username.trim();
   if (!trimmed) return [];
@@ -91,10 +102,7 @@ export const getUserRepos = async (
     per_page: String(perPage),
   });
 
-  const url = `${GITHUB_API_BASE_URL}/users/${encodeURIComponent(
-    trimmed
-  )}/repos?${params.toString()}`;
-
-  const response = await fetch(url, withAuthHeaders());
-  return handleGithubResponse<GithubRepo[]>(response);
+  return requestGithub<GithubRepo[]>(
+    `/users/${encodeURIComponent(trimmed)}/repos?${params.toString()}`
+  );
 };

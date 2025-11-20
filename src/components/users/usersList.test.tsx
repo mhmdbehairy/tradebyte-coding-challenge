@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { UserSearchResults } from './usersList';
 import type { GithubUser } from '../../types/github';
@@ -72,7 +72,7 @@ describe('UserSearchResults', () => {
     render(<UserSearchResults {...getProps()} />);
 
     expect(
-      screen.getByText(/Showing users for “octocat”/i)
+      screen.getByText(/Search results for “octocat”/i)
     ).toBeInTheDocument();
     expect(screen.getAllByRole('button')).toHaveLength(5);
   });
@@ -89,6 +89,25 @@ describe('UserSearchResults', () => {
 
     fireEvent.click(toggle);
     expect(screen.queryByTestId('user-repos')).not.toBeInTheDocument();
+  });
+
+  it('resets any expanded user when query changes', async () => {
+    const { rerender } = render(<UserSearchResults {...getProps()} />);
+
+    const toggle = screen.getByRole('button', { name: /user-1/i });
+    fireEvent.click(toggle);
+
+    expect(await screen.findByTestId('user-repos')).toHaveTextContent(
+      'Repos for user-1'
+    );
+
+    rerender(
+      <UserSearchResults {...getProps({ trimmedQuery: 'new-query' })} />
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('user-repos')).not.toBeInTheDocument();
+    });
   });
 
   it('shows empty state when no results match', () => {

@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useUserRepos } from './useUserRepos';
 import RateLimitAlert from '../shared/rateLimitAlert';
+import type { GithubRepo } from '../../types/github';
 
 const isRateLimitError = (incoming: Error | null) =>
   typeof incoming?.message === 'string' &&
@@ -13,7 +14,7 @@ export interface UserReposListProps {
 export const UserReposList = ({ username }: UserReposListProps) => {
   const trimmedUsername = username?.trim() ?? '';
   const {
-    data,
+    repos,
     isLoading,
     isError,
     error,
@@ -24,12 +25,8 @@ export const UserReposList = ({ username }: UserReposListProps) => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  const repos = useMemo(() => {
-    const flattened = data?.pages.flatMap((page) => page) ?? [];
-    return [...flattened].sort(
-      (a, b) => b.stargazers_count - a.stargazers_count
-    );
-  }, [data]);
+  const hasRepos = repos.length > 0;
+  const isInitialLoad = isLoading && !hasRepos;
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -38,6 +35,7 @@ export const UserReposList = ({ username }: UserReposListProps) => {
   }, [trimmedUsername]);
 
   useEffect(() => {
+    // Watch the sentinel element so we can fetch the next page as soon as the user scrolls near the bottom.
     const root = scrollContainerRef.current;
     const sentinel = sentinelRef.current;
 
@@ -84,17 +82,17 @@ export const UserReposList = ({ username }: UserReposListProps) => {
     );
   }
 
-  if (isLoading && repos.length === 0) {
+  if (isInitialLoad) {
     return <p className="text-sm text-slate-500">Loading repositories...</p>;
   }
 
-  if (!isLoading && repos.length === 0) {
+  if (!isLoading && !hasRepos) {
     return (
       <p className="text-sm text-slate-500">No public repositories found.</p>
     );
   }
 
-  const showPaginationHints = repos.length > 0;
+  const showPaginationHints = hasRepos;
   const hintMessage = isFetchingNextPage
     ? 'Loading more repositories...'
     : hasNextPage
@@ -107,33 +105,11 @@ export const UserReposList = ({ username }: UserReposListProps) => {
         ref={scrollContainerRef}
         className="max-h-80 w-full overflow-x-hidden overflow-y-auto pr-1"
         aria-live="polite"
+        aria-busy={isLoading || isFetchingNextPage}
       >
         <ul className="w-full space-y-3">
           {repos.map((repo) => (
-            <li key={repo.id}>
-              <a
-                href={repo.html_url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex w-full items-start justify-between gap-4 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 transition hover:bg-slate-100"
-              >
-                <div className="min-w-0 flex-1 space-y-1">
-                  <p
-                    className="truncate text-base font-semibold text-slate-900"
-                    title={repo.name}
-                  >
-                    {repo.name}
-                  </p>
-                  {repo.description && (
-                    <p className="text-sm text-slate-600">{repo.description}</p>
-                  )}
-                </div>
-                <div className="flex shrink-0 items-center gap-1 text-sm font-medium text-slate-500">
-                  <span aria-hidden="true">★</span>
-                  <span>{repo.stargazers_count}</span>
-                </div>
-              </a>
-            </li>
+            <RepoListItem key={repo.id} repo={repo} />
           ))}
         </ul>
         <div ref={sentinelRef} className="h-2 w-full" aria-hidden="true" />
@@ -158,3 +134,29 @@ export const UserReposList = ({ username }: UserReposListProps) => {
 };
 
 export default UserReposList;
+
+const RepoListItem = ({ repo }: { repo: GithubRepo }) => (
+  <li>
+    <a
+      href={repo.html_url}
+      target="_blank"
+      rel="noreferrer noopener"
+      className="flex w-full items-start justify-between gap-4 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 transition hover:bg-slate-100"
+    >
+      <div className="min-w-0 flex-1 space-y-1">
+        <p className="truncate text-base font-semibold text-slate-900" title={repo.name}>
+          {repo.name}
+        </p>
+        {repo.description && (
+          <p className="text-sm text-slate-600">{repo.description}</p>
+        )}
+      </div>
+      <div className="flex shrink-0 items-center gap-1 text-sm font-medium text-slate-500" title={`${repo.stargazers_count} stars`}>
+        <span aria-hidden="true">★</span>
+        <span aria-label={`${repo.stargazers_count} stars`}>
+          {repo.stargazers_count}
+        </span>
+      </div>
+    </a>
+  </li>
+);

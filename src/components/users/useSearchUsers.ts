@@ -8,13 +8,19 @@ interface UseSearchUsersParams {
 
 export const useSearchUsers = ({ query }: UseSearchUsersParams) => {
   const trimmedQuery = query.trim();
+  const hasQuery = Boolean(trimmedQuery);
 
-  return useQuery<GithubUser[], Error>({
+  const queryResult = useQuery<GithubUser[], Error>({
     queryKey: ['search-users', trimmedQuery],
     queryFn: () => searchUsers(trimmedQuery),
-    enabled: Boolean(trimmedQuery),
+    enabled: hasQuery,
     staleTime: 30 * 1000,
     retry: false,
     refetchOnWindowFocus: false,
   });
+
+  return {
+    ...queryResult,
+    users: queryResult.data ?? [],
+  };
 };

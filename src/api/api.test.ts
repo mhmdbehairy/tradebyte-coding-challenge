@@ -7,6 +7,7 @@ const jsonResponse = (body: unknown, init: ResponseInit) =>
 const loadApiModule = async (env?: Record<string, string>) => {
   vi.resetModules();
   vi.unstubAllEnvs();
+  vi.stubEnv('VITE_GITHUB_TOKEN', '');
   if (env) {
     for (const [key, value] of Object.entries(env)) {
       vi.stubEnv(key, value);
