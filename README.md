@@ -29,6 +29,7 @@ A Vite + React + TypeScript app that lets you search GitHub users, inspect their
 - `npm run lint` – run eslint across the project
 - `npm run format` – format the codebase with Prettier
 - `npm run test` – execute the Vitest suite (uses jsdom + Testing Library)
+- `npm run test:e2e` – run the Playwright browser tests (requires installed browsers)
 
 ### Feature highlights
 
