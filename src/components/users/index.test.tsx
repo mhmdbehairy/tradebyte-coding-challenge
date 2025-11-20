@@ -23,8 +23,10 @@ vi.mock('./usersList', () => ({
 describe('SearchPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    window.history.replaceState(null, '', '/');
     mockUseSearchUsers.mockReturnValue({
       data: [],
+      users: [],
       isLoading: false,
       isError: false,
       error: null,
@@ -59,6 +61,7 @@ describe('SearchPanel', () => {
     ];
     mockUseSearchUsers.mockReturnValue({
       data: users,
+      users,
       isLoading: true,
       isError: true,
       error: new Error('Network'),
@@ -76,5 +79,55 @@ describe('SearchPanel', () => {
         isError: true,
       })
     );
+  });
+
+  it('commits debounced query updates triggered by user input', () => {
+    const handleCommit = vi.fn();
+    const noop = () => {};
+
+    const { rerender } = render(
+      <SearchPanel
+        query="octocat"
+        queryUpdateSource="initial"
+        onQueryChange={noop}
+        onQueryCommit={handleCommit}
+      />
+    );
+
+    rerender(
+      <SearchPanel
+        query="gaearon"
+        queryUpdateSource="user"
+        onQueryChange={noop}
+        onQueryCommit={handleCommit}
+      />
+    );
+
+    expect(handleCommit).toHaveBeenCalledWith('gaearon');
+  });
+
+  it('skips committing when query changes come from browser history', () => {
+    const handleCommit = vi.fn();
+    const noop = () => {};
+
+    const { rerender } = render(
+      <SearchPanel
+        query="gaearon"
+        queryUpdateSource="initial"
+        onQueryChange={noop}
+        onQueryCommit={handleCommit}
+      />
+    );
+
+    rerender(
+      <SearchPanel
+        query="octocat"
+        queryUpdateSource="history"
+        onQueryChange={noop}
+        onQueryCommit={handleCommit}
+      />
+    );
+
+    expect(handleCommit).not.toHaveBeenCalled();
   });
 });

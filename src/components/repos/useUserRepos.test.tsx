@@ -9,6 +9,7 @@ import type { GithubRepo } from '../../types/github';
 
 vi.mock('../../api', () => ({
   getUserRepos: vi.fn(),
+  REPOS_PAGE_SIZE: 10,
 }));
 
 const getUserReposMock = getUserRepos as unknown as Mock;
@@ -41,6 +42,18 @@ const createRepos = (count: number, startId = 1): GithubRepo[] =>
     };
   });
 
+const createRepoWithStars = (id: number, stars: number): GithubRepo => ({
+  id,
+  name: `repo-${id}`,
+  full_name: `octocat/repo-${id}`,
+  html_url: `https://github.com/octocat/repo-${id}`,
+  description: null,
+  fork: false,
+  stargazers_count: stars,
+  language: 'TypeScript',
+  updated_at: '2024-01-01T00:00:00Z',
+});
+
 describe('useUserRepos', () => {
   beforeEach(() => {
     getUserReposMock.mockReset();
@@ -71,6 +84,7 @@ describe('useUserRepos', () => {
 
     await waitFor(() => {
       expect(result.current.data?.pages).toHaveLength(1);
+      expect(result.current.repos).toHaveLength(10);
     });
 
     expect(getUserReposMock).toHaveBeenCalledWith('octocat', 1, 10);
@@ -81,9 +95,38 @@ describe('useUserRepos', () => {
 
     await waitFor(() => {
       expect(result.current.data?.pages).toHaveLength(2);
+      expect(result.current.repos).toHaveLength(13);
     });
 
     expect(getUserReposMock).toHaveBeenCalledWith('octocat', 2, 10);
     expect(result.current.hasNextPage).toBe(false);
+  });
+
+  it('returns a flattened list sorted by stargazers desc', async () => {
+    const wrapper = createQueryClientWrapper();
+    const firstPage = createRepos(10, 1);
+    const secondPage = [createRepoWithStars(11, 50)];
+
+    getUserReposMock
+      .mockResolvedValueOnce(firstPage)
+      .mockResolvedValueOnce(secondPage);
+
+    const { result } = renderHook(() => useUserRepos({ username: 'octocat' }), {
+      wrapper,
+    });
+
+    await waitFor(() => {
+      expect(result.current.repos).toHaveLength(10);
+    });
+
+    await act(async () => {
+      await result.current.fetchNextPage();
+    });
+
+    await waitFor(() => {
+      expect(result.current.repos).toHaveLength(11);
+      expect(result.current.repos[0].id).toBe(11);
+      expect(result.current.repos[result.current.repos.length - 1].id).toBe(1);
+    });
   });
 });
