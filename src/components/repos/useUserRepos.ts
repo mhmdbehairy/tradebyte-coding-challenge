@@ -18,6 +18,8 @@ export const useUserRepos = ({ username }: UseUserReposParams) => {
       getUserRepos(trimmedUsername, pageParam as number, pageSize),
     enabled: Boolean(trimmedUsername),
     staleTime: 30 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === pageSize ? allPages.length + 1 : undefined,
   });

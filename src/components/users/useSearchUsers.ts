@@ -14,5 +14,7 @@ export const useSearchUsers = ({ query }: UseSearchUsersParams) => {
     queryFn: () => searchUsers(trimmedQuery),
     enabled: Boolean(trimmedQuery),
     staleTime: 30 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 };
