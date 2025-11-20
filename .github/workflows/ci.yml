@@ -36,7 +36,6 @@ jobs:
         run: npm run test
 
   e2e:
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
