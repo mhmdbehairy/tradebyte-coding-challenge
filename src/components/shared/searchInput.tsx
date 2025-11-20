@@ -8,6 +8,8 @@ export interface SearchInputProps
   onChange: (value: string) => void;
   inputClassName?: string;
   wrapperClassName?: string;
+  labelClassName?: string;
+  hideLabel?: boolean;
 }
 
 export const SearchInput = ({
@@ -19,12 +21,16 @@ export const SearchInput = ({
   type = 'text',
   inputClassName = 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/30 focus:outline-none',
   wrapperClassName = 'space-y-2',
+  labelClassName = 'text-sm font-medium text-slate-600',
+  hideLabel = false,
   ...inputProps
 }: SearchInputProps) => (
   <div className={wrapperClassName}>
-    <label htmlFor={id} className="text-sm font-medium text-slate-600">
-      {label}
-    </label>
+    {!hideLabel && (
+      <label htmlFor={id} className={labelClassName}>
+        {label}
+      </label>
+    )}
     <input
       id={id}
       type={type}

@@ -115,14 +115,14 @@ export const UserReposList = ({ username }: UserReposListProps) => {
         <div ref={sentinelRef} className="h-2 w-full" aria-hidden="true" />
       </div>
       {showPaginationHints && (
-        <div className="flex flex-col items-center py-2 text-xs text-slate-400">
+        <div className="flex flex-col items-center py-2 text-xs text-slate-600">
           <div className="flex w-full items-center gap-2">
             <div className="h-px flex-1 bg-slate-200" />
             <span>{hintMessage}</span>
             <div className="h-px flex-1 bg-slate-200" />
           </div>
           <div
-            className="mt-1 text-lg leading-none text-slate-300"
+            className="mt-1 text-lg leading-none text-slate-500"
             aria-hidden="true"
           >
             ↓

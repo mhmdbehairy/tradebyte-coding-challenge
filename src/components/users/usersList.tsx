@@ -69,7 +69,7 @@ export const UserSearchResults = ({
 
       {trimmedQuery && !isLoading && !isError && (
         <p
-          className="text-xs tracking-wide text-slate-400 uppercase"
+          className="text-xs tracking-wide text-slate-600 uppercase"
           aria-live="polite"
         >
           Search results for “{trimmedQuery}”
@@ -123,7 +123,7 @@ const UserResultCard = ({
     <button
       type="button"
       onClick={onToggle}
-      className={`flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-100 px-4 py-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
+          className={`flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
         isExpanded ? 'bg-slate-100' : 'bg-slate-50 hover:bg-slate-100'
       }`}
       aria-expanded={isExpanded}
@@ -137,11 +137,11 @@ const UserResultCard = ({
         />
         <div>
           <p className="text-sm font-semibold text-slate-900">{user.login}</p>
-          <p className="text-xs text-slate-500">Tap to view repos</p>
+          <p className="text-xs text-slate-600">Tap to view repos</p>
         </div>
       </div>
       <span
-        className={`text-lg text-slate-400 transition-transform ${
+        className={`text-lg text-slate-600 transition-transform ${
           isExpanded ? 'rotate-180' : ''
         }`}
         aria-hidden="true"
