@@ -144,14 +144,20 @@ const RepoListItem = ({ repo }: { repo: GithubRepo }) => (
       className="flex w-full items-start justify-between gap-4 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 transition hover:bg-slate-100"
     >
       <div className="min-w-0 flex-1 space-y-1">
-        <p className="truncate text-base font-semibold text-slate-900" title={repo.name}>
+        <p
+          className="truncate text-base font-semibold text-slate-900"
+          title={repo.name}
+        >
           {repo.name}
         </p>
         {repo.description && (
           <p className="text-sm text-slate-600">{repo.description}</p>
         )}
       </div>
-      <div className="flex shrink-0 items-center gap-1 text-sm font-medium text-slate-500" title={`${repo.stargazers_count} stars`}>
+      <div
+        className="flex shrink-0 items-center gap-1 text-sm font-medium text-slate-500"
+        title={`${repo.stargazers_count} stars`}
+      >
         <span aria-hidden="true">★</span>
         <span aria-label={`${repo.stargazers_count} stars`}>
           {repo.stargazers_count}

@@ -24,8 +24,10 @@ export const UserSearchResults = ({
   isError,
   error,
 }: UserSearchResultsProps) => {
-  const [expandedUser, setExpandedUser] =
-    useState<{ id: number; queryKey: string } | null>(null);
+  const [expandedUser, setExpandedUser] = useState<{
+    id: number;
+    queryKey: string;
+  } | null>(null);
   const visibleUsers = useMemo(
     () => users.slice(0, MAX_VISIBLE_USERS),
     [users]
