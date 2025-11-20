@@ -57,13 +57,24 @@ export const searchUsers = async (query: string): Promise<GithubUser[]> => {
   return data.items;
 };
 
-export const getUserRepos = async (username: string): Promise<GithubRepo[]> => {
+export const getUserRepos = async (
+  username: string,
+  page = 1,
+  perPage = 10
+): Promise<GithubRepo[]> => {
   const trimmed = username.trim();
   if (!trimmed) return [];
 
+  const params = new URLSearchParams({
+    sort: 'updated',
+    direction: 'desc',
+    page: String(page),
+    per_page: String(perPage),
+  });
+
   const url = `${GITHUB_API_BASE_URL}/users/${encodeURIComponent(
     trimmed
-  )}/repos?sort=updated&direction=desc`;
+  )}/repos?${params.toString()}`;
 
   const response = await fetch(url);
   return handleGithubResponse<GithubRepo[]>(response);
