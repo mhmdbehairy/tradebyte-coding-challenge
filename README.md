@@ -6,15 +6,6 @@ A Vite + React + TypeScript app that lets you search GitHub users, inspect their
 
 - https://tradebyte-coding-challenge.vercel.app
 
-### Tech stack
-
-- React 19 with functional components and hooks
-- Vite for local dev and builds
-- TypeScript for type safety
-- @tanstack/react-query for data fetching/caching
-- Tailwind utility classes for styling
-- Vitest + Testing Library for unit tests
-
 ### Getting started
 
 1. Install dependencies: `npm install`
@@ -42,6 +33,15 @@ A Vite + React + TypeScript app that lets you search GitHub users, inspect their
 - Debounced GitHub user search limited to five results for clarity
 - Expandable repo panels with infinite scroll, rate-limit-aware messaging, and star counts
 - URL param persistence: the `q` query param stores the search term and `expanded` tracks which user’s repos are open, enabling refresh/back/forward navigation to restore state automatically
+
+### State, URL params, and caching
+
+- **Local + URL state:** The top-level `App` component sources the search term from `useSearchParamState('q')`, so every keystroke updates both React state and `?q=` in the address bar. The same hook powers the expandable user cards via the `expanded` param, and it listens to `popstate` so browser navigation replays prior searches/expansions without extra code.
+- **User intent tracking:** `useSearchParamState` reports whether the latest change came from the user, initial load, or browser history. `SearchPanel` uses that signal to decide when to push vs. replace history entries, avoiding noisy entries while still capturing “committed” searches.
+- **Server cache via React Query:** `useSearchUsers` and `useUserRepos` wrap the GitHub API with `@tanstack/react-query`. Each query key (`['search-users', trimmedQuery]`, `['user-repos', username]`) keeps results warm for 30 seconds (`staleTime: 30_000`), disables refetch-on-focus, and skips execution until the input is non-empty (`enabled` flag).
+- **Infinite repos + memoization:** Repository pages use `useInfiniteQuery` to fetch 10 at a time, automatically computing the next page param until GitHub signals completion. Returned pages are flattened and memoized, ensuring the UI reuses cached results when reopening a user panel.
+- **Debounced fetches:** A lightweight `useDebounce` hook waits 400 ms after typing before triggering React Query, preventing unnecessary API calls while keeping the UI responsive.
+- **No extra global store:** Redux or Context wasn’t added on purpose—React Query already owns the server cache, and the remaining UI state (search text, expanded card) is trivial to keep local. Introducing a global store would add surface area without solving a real problem here.
 
 ### Testing notes
 
