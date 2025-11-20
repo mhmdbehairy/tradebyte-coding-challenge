@@ -35,3 +35,9 @@ A Vite + React + TypeScript app that lets you search GitHub users, inspect their
 ### Testing notes
 
 The Vitest suite covers API helpers, hooks, and UI flows—including the URL persistence logic. Run `npm run test` before pushing changes to ensure regressions are caught early.
+
+### Lighthouse audits
+
+<img width="1792" height="860" alt="Screenshot 2025-11-20 at 21 45 51" src="https://github.com/user-attachments/assets/e692d819-975f-451d-9bbe-95f56a412595" />
+<img width="1792" height="909" alt="Screenshot 2025-11-20 at 21 44 06" src="https://github.com/user-attachments/assets/7d8c59b6-c761-4dad-9717-c346815e62ea" />
+
