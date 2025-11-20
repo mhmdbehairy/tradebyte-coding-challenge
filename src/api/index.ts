@@ -8,7 +8,7 @@ export const GITHUB_API_BASE_URL = 'https://api.github.com';
 
 const githubToken = import.meta.env.PROD
   ? undefined
-  : import.meta.env.VITE_GITHUB_TOKEN || import.meta.env.GITHUB_TOKEN;
+  : import.meta.env.VITE_GITHUB_TOKEN;
 const shouldAttachToken = Boolean(githubToken);
 
 const withAuthHeaders = (init?: RequestInit): RequestInit | undefined => {
