@@ -21,6 +21,12 @@ A Vite + React + TypeScript app that lets you search GitHub users, inspect their
 2. (Optional) create a `.env` with `VITE_GITHUB_TOKEN=<your-token>` to raise API limits during development.
 3. Start Dev Server: `npm run dev` then open the printed localhost URL.
 
+### Docker
+
+1. Build the production image: `docker build -t tradebyte-app .`
+2. Run the container: `docker run -p 8080:80 tradebyte-app`
+3. Open http://localhost:8080 to view the nginx-served production bundle.
+
 ### Available scripts
 
 - `npm run dev` – launch Vite dev server with hot reload
