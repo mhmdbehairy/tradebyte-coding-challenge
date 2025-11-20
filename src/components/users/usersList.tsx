@@ -172,7 +172,7 @@ const UserResultCard = ({
     {isExpanded && (
       <div
         id={detailsId}
-        className="border-l border-slate-200 pl-4"
+        className="border-l-0 pl-0 sm:border-l sm:border-slate-200 sm:pl-4"
         role="region"
         aria-label={`Repositories for ${user.login}`}
       >

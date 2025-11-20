@@ -32,6 +32,11 @@ export const SearchPanel = ({
     query: debouncedQuery,
   });
   const committedQueryRef = useRef(trimmedQuery);
+  const suspenseFallback = trimmedQuery ? (
+    <p className="mt-6 text-sm text-slate-500">Loading results...</p>
+  ) : (
+    <div className="mt-6" aria-hidden="true" />
+  );
 
   useEffect(() => {
     const isUserInitiated = queryUpdateSource === 'user';
@@ -90,11 +95,7 @@ export const SearchPanel = ({
           </button>
         </div>
       </form>
-      <Suspense
-        fallback={
-          <p className="mt-6 text-sm text-slate-500">Loading results...</p>
-        }
-      >
+      <Suspense fallback={suspenseFallback}>
         <UserSearchResults
           users={users}
           trimmedQuery={trimmedQuery}

@@ -19,10 +19,11 @@ export const SearchInput = ({
   onChange,
   placeholder,
   type = 'text',
-  inputClassName = 'w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/30 focus:outline-none',
+  inputClassName = 'w-full h-12 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/30 focus:outline-none',
   wrapperClassName = 'space-y-2',
   labelClassName = 'text-sm font-medium text-slate-600',
   hideLabel = false,
+  style,
   ...inputProps
 }: SearchInputProps) => (
   <div className={wrapperClassName}>
@@ -38,6 +39,7 @@ export const SearchInput = ({
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
       className={inputClassName}
+      style={{ minHeight: '3rem', ...style }}
       {...inputProps}
     />
   </div>

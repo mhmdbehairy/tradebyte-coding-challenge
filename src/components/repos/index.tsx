@@ -156,7 +156,7 @@ const RepoListItem = ({ repo }: { repo: GithubRepo }) => {
         href={repo.html_url}
         target="_blank"
         rel="noreferrer noopener"
-        className="flex w-full items-start justify-between gap-4 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 transition hover:bg-slate-100"
+        className="flex w-full items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white/90 px-5 py-4 shadow-sm transition hover:border-indigo-200 hover:shadow-md"
       >
         <div className="min-w-0 flex-1 space-y-1">
           <p
