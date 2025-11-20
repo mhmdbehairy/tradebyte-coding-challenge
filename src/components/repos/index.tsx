@@ -103,7 +103,7 @@ export const UserReposList = ({ username }: UserReposListProps) => {
     <div className="space-y-3">
       <div
         ref={scrollContainerRef}
-        className="max-h-80 w-full overflow-y-auto overflow-x-hidden pr-1"
+        className="max-h-80 w-full overflow-x-hidden overflow-y-auto pr-1"
         aria-live="polite"
       >
         <ul className="w-full space-y-3">
