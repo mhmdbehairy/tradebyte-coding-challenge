@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useSearchUsers } from './useSearchUsers';
-import { UserReposList } from '../user';
+import { UserReposList } from '../repos';
 
 export interface SearchPanelProps {
   query: string;
@@ -46,12 +46,6 @@ export const SearchPanel = ({ query, onQueryChange }: SearchPanelProps) => {
             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-500/30 focus:outline-none"
           />
         </div>
-        <button
-          type="submit"
-          className="w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-        >
-          Search
-        </button>
       </form>
 
       <div className="mt-6 space-y-3">
