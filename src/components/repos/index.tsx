@@ -95,9 +95,11 @@ export const UserReposList = ({ username }: UserReposListProps) => {
   }
 
   const showPaginationHints = repos.length > 0;
-  const baseHintMessage = hasNextPage
-    ? 'Scroll for more repositories'
-    : 'All repositories are loaded.';
+  const hintMessage = isFetchingNextPage
+    ? 'Loading more repositories...'
+    : hasNextPage
+      ? 'Scroll for more repositories'
+      : 'All repositories are loaded.';
 
   return (
     <div className="space-y-3">
@@ -140,21 +142,9 @@ export const UserReposList = ({ username }: UserReposListProps) => {
         <div className="flex flex-col items-center py-2 text-xs text-slate-400">
           <div className="flex w-full items-center gap-2">
             <div className="h-px flex-1 bg-slate-200" />
-            <span>{baseHintMessage}</span>
+            <span>{hintMessage}</span>
             <div className="h-px flex-1 bg-slate-200" />
           </div>
-          {hasNextPage && (
-            <div
-              className={`mt-1 flex items-center gap-2 text-[11px] transition-opacity duration-200 ${isFetchingNextPage ? 'opacity-100' : 'opacity-0'}`}
-              aria-live="polite"
-            >
-              <span
-                className="inline-block h-2 w-2 animate-pulse rounded-full bg-slate-400"
-                aria-hidden="true"
-              />
-              <span>Loading more repositories...</span>
-            </div>
-          )}
           <div
             className="mt-1 text-lg leading-none text-slate-300"
             aria-hidden="true"
