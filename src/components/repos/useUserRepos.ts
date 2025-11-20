@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { getUserRepos } from '../../api';
 import type { GithubRepo } from '../../types/github';
 
@@ -9,10 +9,16 @@ interface UseUserReposParams {
 export const useUserRepos = ({ username }: UseUserReposParams) => {
   const trimmedUsername = username?.trim() ?? '';
 
-  return useQuery<GithubRepo[], Error>({
+  const pageSize = 10;
+
+  return useInfiniteQuery<GithubRepo[], Error>({
     queryKey: ['user-repos', trimmedUsername],
-    queryFn: () => getUserRepos(trimmedUsername),
+    initialPageParam: 1,
+    queryFn: ({ pageParam = 1 }) =>
+      getUserRepos(trimmedUsername, pageParam as number, pageSize),
     enabled: Boolean(trimmedUsername),
     staleTime: 30 * 1000,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length === pageSize ? allPages.length + 1 : undefined,
   });
 };
