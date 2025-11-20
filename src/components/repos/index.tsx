@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useUserRepos } from './useUserRepos';
+import RateLimitAlert from '../shared/rateLimitAlert';
+
+const isRateLimitError = (incoming: Error | null) =>
+  typeof incoming?.message === 'string' &&
+  incoming.message.toLowerCase().includes('rate limit');
 
 export interface UserReposListProps {
   username: string | null;
@@ -25,10 +30,6 @@ export const UserReposList = ({ username }: UserReposListProps) => {
       (a, b) => b.stargazers_count - a.stargazers_count
     );
   }, [data]);
-
-  if (!trimmedUsername) {
-    return null;
-  }
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -69,8 +70,14 @@ export const UserReposList = ({ username }: UserReposListProps) => {
     repos.length,
   ]);
 
+  if (!trimmedUsername) {
+    return null;
+  }
+
   if (isError) {
-    return (
+    return isRateLimitError(error) ? (
+      <RateLimitAlert message={error?.message} />
+    ) : (
       <p className="text-sm text-red-500">
         {error?.message ?? 'Unable to load repositories.'}
       </p>
@@ -86,6 +93,13 @@ export const UserReposList = ({ username }: UserReposListProps) => {
       <p className="text-sm text-slate-500">No public repositories found.</p>
     );
   }
+
+  const showPaginationHints = repos.length > 0;
+  const hintMessage = isFetchingNextPage
+    ? 'Loading more repositories...'
+    : hasNextPage
+      ? 'Scroll for more repositories'
+      : 'All repositories are loaded.';
 
   return (
     <div className="space-y-3">
@@ -124,8 +138,20 @@ export const UserReposList = ({ username }: UserReposListProps) => {
         </ul>
         <div ref={sentinelRef} className="h-2 w-full" aria-hidden="true" />
       </div>
-      {isFetchingNextPage && (
-        <p className="text-xs text-slate-400">Loading more repositories...</p>
+      {showPaginationHints && (
+        <div className="flex flex-col items-center py-2 text-xs text-slate-400">
+          <div className="flex w-full items-center gap-2">
+            <div className="h-px flex-1 bg-slate-200" />
+            <span>{hintMessage}</span>
+            <div className="h-px flex-1 bg-slate-200" />
+          </div>
+          <div
+            className="mt-1 text-lg leading-none text-slate-300"
+            aria-hidden="true"
+          >
+            ↓
+          </div>
+        </div>
       )}
     </div>
   );
