@@ -101,7 +101,9 @@ test.describe('GitHub Explorer', () => {
     ).toBeVisible();
   });
 
-  test('shows empty state when no users match search term', async ({ page }) => {
+  test('shows empty state when no users match search term', async ({
+    page,
+  }) => {
     await page.goto('/');
 
     const input = page.getByLabel('GitHub username');
