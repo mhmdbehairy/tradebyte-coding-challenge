@@ -79,39 +79,43 @@ const mockReposApi = async (page: Page) => {
   });
 };
 
-test.beforeEach(async ({ page }) => {
-  await mockSearchApi(page);
-  await mockReposApi(page);
-});
+test.describe('GitHub Explorer', () => {
+  test.beforeEach(async ({ page }) => {
+    await mockSearchApi(page);
+    await mockReposApi(page);
+  });
 
-test('searches for users and displays repositories', async ({ page }) => {
-  await page.goto('/');
+  test('searches for users and displays repositories', async ({ page }) => {
+    await page.goto('/');
 
-  const input = page.getByLabel('GitHub username');
-  await input.fill('octocat');
+    const input = page.getByLabel('GitHub username');
+    await input.fill('octocat');
 
-  const expandButton = page.getByRole('button', { name: /octocat/i });
-  await expect(expandButton).toBeVisible();
+    const expandButton = page.getByRole('button', { name: /octocat/i });
+    await expect(expandButton).toBeVisible();
 
-  await expandButton.click();
+    await expandButton.click();
 
-  await expect(page.getByRole('link', { name: /hello-world/i })).toBeVisible();
-});
+    await expect(
+      page.getByRole('link', { name: /hello-world/i })
+    ).toBeVisible();
+  });
 
-test('shows empty state when no users match search term', async ({ page }) => {
-  await page.goto('/');
+  test('shows empty state when no users match search term', async ({ page }) => {
+    await page.goto('/');
 
-  const input = page.getByLabel('GitHub username');
-  await input.fill('empty user');
+    const input = page.getByLabel('GitHub username');
+    await input.fill('empty user');
 
-  await expect(page.getByText('No users found')).toBeVisible();
-});
+    await expect(page.getByText('No users found')).toBeVisible();
+  });
 
-test('renders rate limit message when API returns 403', async ({ page }) => {
-  await page.goto('/');
+  test('renders rate limit message when API returns 403', async ({ page }) => {
+    await page.goto('/');
 
-  const input = page.getByLabel('GitHub username');
-  await input.fill('rate limit test');
+    const input = page.getByLabel('GitHub username');
+    await input.fill('rate limit test');
 
-  await expect(page.getByText('GitHub rate limit reached')).toBeVisible();
+    await expect(page.getByText('GitHub rate limit reached')).toBeVisible();
+  });
 });
