@@ -61,7 +61,13 @@ export const UserReposList = ({ username }: UserReposListProps) => {
     observer.observe(sentinel);
 
     return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, trimmedUsername, repos.length]);
+  }, [
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    trimmedUsername,
+    repos.length,
+  ]);
 
   if (isError) {
     return (
@@ -102,9 +108,7 @@ export const UserReposList = ({ username }: UserReposListProps) => {
                     {repo.name}
                   </p>
                   {repo.description && (
-                    <p className="text-sm text-slate-600">
-                      {repo.description}
-                    </p>
+                    <p className="text-sm text-slate-600">{repo.description}</p>
                   )}
                 </div>
                 <div className="flex items-center gap-1 text-sm font-medium text-slate-500">
