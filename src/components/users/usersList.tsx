@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
 import type { GithubUser } from '../../types/github';
-import RateLimitAlert from '../shared/rateLimitAlert';
+import StatusMessage, { StatusIcon } from '../shared/statusMessage';
 import { useSearchParamState } from '../../hooks/useSearchParamState';
 
 const UserReposList = lazy(() => import('../repos'));
@@ -60,14 +60,22 @@ export const UserSearchResults = ({
 
       {isError &&
         (isRateLimitError(error) ? (
-          <RateLimitAlert message={error?.message} />
+          <StatusMessage
+            variant="warning"
+            title="GitHub rate limit reached"
+            description={
+              error?.message ??
+              'We have hit the hourly limit for anonymous requests.'
+            }
+            icon="!"
+          />
         ) : (
           <p className="text-sm text-red-500">
             {error?.message ?? 'Something went wrong.'}
           </p>
         ))}
 
-      {trimmedQuery && !isLoading && !isError && (
+      {showResults && (
         <p
           className="text-xs tracking-wide text-slate-400 uppercase"
           aria-live="polite"
@@ -96,9 +104,20 @@ export const UserSearchResults = ({
       )}
 
       {showEmptyState && (
-        <p className="text-sm text-slate-500" aria-live="polite">
-          No users found.
-        </p>
+        <StatusMessage
+          variant="info"
+          title="No users found"
+          icon={<StatusIcon className="h-4 w-4" />}
+          iconLabel="Information"
+          description={
+            <div className="space-y-1">
+              <p>
+                We couldn't find any GitHub users matching "{trimmedQuery}".
+              </p>
+              <p>Check the spelling or try another search term.</p>
+            </div>
+          }
+        />
       )}
     </div>
   );

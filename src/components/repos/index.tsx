@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useUserRepos } from './useUserRepos';
-import RateLimitAlert from '../shared/rateLimitAlert';
+import StatusMessage from '../shared/statusMessage';
 import type { GithubRepo } from '../../types/github';
 
 const isRateLimitError = (incoming: Error | null) =>
@@ -74,7 +74,14 @@ export const UserReposList = ({ username }: UserReposListProps) => {
 
   if (isError) {
     return isRateLimitError(error) ? (
-      <RateLimitAlert message={error?.message} />
+      <StatusMessage
+        variant="warning"
+        title="GitHub rate limit reached"
+        description={
+          error?.message ?? 'We have hit the hourly limit for repositories.'
+        }
+        icon="!"
+      />
     ) : (
       <p className="text-sm text-red-500">
         {error?.message ?? 'Unable to load repositories.'}
