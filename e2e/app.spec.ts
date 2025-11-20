@@ -57,11 +57,7 @@ const mockSearchApi = async (page: Page) => {
     }
 
     if (query.includes('rate')) {
-      await respondJson(
-        route,
-        { message: 'API rate limit exceeded' },
-        403
-      );
+      await respondJson(route, { message: 'API rate limit exceeded' }, 403);
       return;
     }
 
