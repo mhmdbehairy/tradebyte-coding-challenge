@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { useDebounce } from '../../hooks/useDebounce';
 import { useSearchUsers } from './useSearchUsers';
 import { UserReposList } from '../repos';
 
@@ -8,14 +9,15 @@ export interface SearchPanelProps {
 }
 
 export const SearchPanel = ({ query, onQueryChange }: SearchPanelProps) => {
-  const trimmedQuery = query.trim();
+  const debouncedQuery = useDebounce(query, 400);
+  const trimmedQuery = debouncedQuery.trim();
   const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
   const {
     data: users = [],
     isLoading,
     isError,
     error,
-  } = useSearchUsers({ query });
+  } = useSearchUsers({ query: debouncedQuery });
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
