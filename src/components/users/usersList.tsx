@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import type { GithubUser } from '../../types/github';
-import { UserReposList } from '../repos';
+
+const UserReposList = lazy(() => import('../repos'));
 
 export interface UserSearchResultsProps {
   users: GithubUser[];
@@ -18,7 +19,7 @@ export const UserSearchResults = ({
   error,
 }: UserSearchResultsProps) => {
   const [expandedUserId, setExpandedUserId] = useState<number | null>(null);
-  const visibleUsers = users.slice(0, 5);
+  const visibleUsers = useMemo(() => users.slice(0, 5), [users]);
 
   const handleToggle = (userId: number) => {
     setExpandedUserId((current) => (current === userId ? null : userId));
@@ -86,7 +87,15 @@ export const UserSearchResults = ({
 
                 {isExpanded && (
                   <div className="border-l border-slate-200 pl-4">
-                    <UserReposList username={user.login} />
+                    <Suspense
+                      fallback={
+                        <p className="text-sm text-slate-500">
+                          Preparing repositories...
+                        </p>
+                      }
+                    >
+                      <UserReposList username={user.login} />
+                    </Suspense>
                   </div>
                 )}
               </li>

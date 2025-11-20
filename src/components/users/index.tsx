@@ -1,8 +1,9 @@
-import type { FormEvent } from 'react';
+import { lazy, Suspense, type FormEvent } from 'react';
 import { useDebounce } from '../../hooks/useDebounce';
 import { SearchInput } from '../shared/searchInput';
-import { UserSearchResults } from './usersList';
 import { useSearchUsers } from './useSearchUsers';
+
+const UserSearchResults = lazy(() => import('./usersList'));
 
 export interface SearchPanelProps {
   query: string;
@@ -33,13 +34,19 @@ export const SearchPanel = ({ query, onQueryChange }: SearchPanelProps) => {
           placeholder="e.g. gaearon"
         />
       </form>
-      <UserSearchResults
-        users={users}
-        trimmedQuery={trimmedQuery}
-        isLoading={isLoading}
-        isError={isError}
-        error={error ?? null}
-      />
+      <Suspense
+        fallback={
+          <p className="mt-6 text-sm text-slate-500">Loading results...</p>
+        }
+      >
+        <UserSearchResults
+          users={users}
+          trimmedQuery={trimmedQuery}
+          isLoading={isLoading}
+          isError={isError}
+          error={error ?? null}
+        />
+      </Suspense>
     </section>
   );
 };
