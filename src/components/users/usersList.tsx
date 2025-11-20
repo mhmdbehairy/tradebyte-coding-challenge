@@ -1,7 +1,12 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
 import type { GithubUser } from '../../types/github';
+import RateLimitAlert from '../shared/rateLimitAlert';
 
 const UserReposList = lazy(() => import('../repos'));
+
+const isRateLimitError = (incoming: Error | null) =>
+  typeof incoming?.message === 'string' &&
+  incoming.message.toLowerCase().includes('rate limit');
 
 export interface UserSearchResultsProps {
   users: GithubUser[];
@@ -31,11 +36,14 @@ export const UserSearchResults = ({
         <p className="text-sm text-slate-500">Searching users...</p>
       )}
 
-      {isError && (
-        <p className="text-sm text-red-500">
-          {error?.message ?? 'Something went wrong.'}
-        </p>
-      )}
+      {isError &&
+        (isRateLimitError(error) ? (
+          <RateLimitAlert message={error?.message} />
+        ) : (
+          <p className="text-sm text-red-500">
+            {error?.message ?? 'Something went wrong.'}
+          </p>
+        ))}
 
       {trimmedQuery && !isLoading && !isError && (
         <p className="text-xs tracking-wide text-slate-400 uppercase">

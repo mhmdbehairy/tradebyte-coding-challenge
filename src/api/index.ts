@@ -6,6 +6,25 @@ import type {
 
 export const GITHUB_API_BASE_URL = 'https://api.github.com';
 
+const githubToken = import.meta.env.PROD
+  ? undefined
+  : import.meta.env.VITE_GITHUB_TOKEN;
+const shouldAttachToken = Boolean(githubToken);
+
+const withAuthHeaders = (init?: RequestInit): RequestInit | undefined => {
+  if (!shouldAttachToken) {
+    return init;
+  }
+
+  return {
+    ...init,
+    headers: {
+      ...(init?.headers ?? {}),
+      Authorization: `Bearer ${githubToken}`,
+    },
+  };
+};
+
 export const handleGithubResponse = async <T>(
   response: Response
 ): Promise<T> => {
@@ -51,7 +70,7 @@ export const searchUsers = async (query: string): Promise<GithubUser[]> => {
     trimmed
   )}&per_page=5`;
 
-  const response = await fetch(url);
+  const response = await fetch(url, withAuthHeaders());
   const data = await handleGithubResponse<GithubSearchUsersResponse>(response);
 
   return data.items;
@@ -76,6 +95,6 @@ export const getUserRepos = async (
     trimmed
   )}/repos?${params.toString()}`;
 
-  const response = await fetch(url);
+  const response = await fetch(url, withAuthHeaders());
   return handleGithubResponse<GithubRepo[]>(response);
 };
