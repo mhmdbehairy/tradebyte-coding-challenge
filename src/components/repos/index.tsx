@@ -100,11 +100,12 @@ export const UserReposList = ({ username }: UserReposListProps) => {
   }
 
   const showPaginationHints = hasRepos;
+  const showArrow = hasNextPage;
   const hintMessage = isFetchingNextPage
     ? 'Loading more repositories...'
     : hasNextPage
       ? 'Scroll for more repositories'
-      : 'All repositories are loaded.';
+      : 'All repositories are loaded';
 
   return (
     <div className="space-y-3">
@@ -128,12 +129,14 @@ export const UserReposList = ({ username }: UserReposListProps) => {
             <span>{hintMessage}</span>
             <div className="h-px flex-1 bg-slate-200" />
           </div>
-          <div
-            className="mt-1 text-lg leading-none text-slate-500"
-            aria-hidden="true"
-          >
-            ↓
-          </div>
+          {showArrow && (
+            <div
+              className="mt-1 text-lg leading-none text-slate-300"
+              aria-hidden="true"
+            >
+              ↓
+            </div>
+          )}
         </div>
       )}
     </div>

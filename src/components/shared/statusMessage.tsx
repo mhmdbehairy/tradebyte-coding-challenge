@@ -2,14 +2,17 @@ import type { ReactNode, SVGProps } from 'react';
 
 export type StatusVariant = 'info' | 'warning' | 'error';
 
-const VARIANT_STYLES: Record<StatusVariant, {
-  border: string;
-  background: string;
-  title: string;
-  body: string;
-  iconWrapper: string;
-  icon: ReactNode;
-}> = {
+const VARIANT_STYLES: Record<
+  StatusVariant,
+  {
+    border: string;
+    background: string;
+    title: string;
+    body: string;
+    iconWrapper: string;
+    icon: ReactNode;
+  }
+> = {
   info: {
     border: 'border-sky-200',
     background: 'bg-sky-50',

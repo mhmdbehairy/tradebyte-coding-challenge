@@ -63,7 +63,10 @@ export const SearchPanel = ({
   return (
     <section className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-lg">
       <form onSubmit={handleSubmit} className="space-y-2">
-        <label htmlFor="user-search" className="text-sm font-medium text-slate-600">
+        <label
+          htmlFor="user-search"
+          className="text-sm font-medium text-slate-600"
+        >
           GitHub username
         </label>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
