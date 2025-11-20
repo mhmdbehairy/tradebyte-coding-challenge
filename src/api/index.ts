@@ -9,20 +9,38 @@ export const GITHUB_API_BASE_URL = 'https://api.github.com';
 export const handleGithubResponse = async <T>(
   response: Response
 ): Promise<T> => {
-  if (!response.ok) {
-    let errorMsg = `GitHub API error (${response.status}): ${response.statusText}`;
-    try {
-      const data = await response.json();
-      if (data?.message) {
-        errorMsg += ` – ${data.message}`;
-      }
-    } catch {
-      // Ignore JSON parsing errors
-    }
-    throw new Error(errorMsg);
+  if (response.ok) {
+    return response.json() as Promise<T>;
   }
 
-  return response.json() as Promise<T>;
+  let apiMessage: string | undefined;
+  let isRateLimitError = false;
+
+  try {
+    const data = await response.json();
+    if (typeof data?.message === 'string') {
+      apiMessage = data.message;
+      if (
+        response.status === 403 &&
+        data.message.toLowerCase().includes('rate limit')
+      ) {
+        isRateLimitError = true;
+      }
+    }
+  } catch {
+    // Ignore JSON parsing errors
+  }
+
+  if (isRateLimitError) {
+    throw new Error('GitHub API rate limit exceeded. Please try again later.');
+  }
+
+  let errorMsg = `GitHub API error (${response.status}): ${response.statusText}`;
+  if (apiMessage) {
+    errorMsg += ` – ${apiMessage}`;
+  }
+
+  throw new Error(errorMsg);
 };
 
 export const searchUsers = async (query: string): Promise<GithubUser[]> => {
