@@ -2,13 +2,10 @@ import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
 import type { GithubUser } from '../../types/github';
 import StatusMessage, { StatusIcon } from '../shared/statusMessage';
 import { useSearchParamState } from '../../hooks/useSearchParamState';
+import { isRateLimitError } from '../../utils/errors';
 
 const UserReposList = lazy(() => import('../repos'));
 const MAX_VISIBLE_USERS = 5;
-
-const isRateLimitError = (incoming: Error | null) =>
-  typeof incoming?.message === 'string' &&
-  incoming.message.toLowerCase().includes('rate limit');
 
 export interface UserSearchResultsProps {
   users: GithubUser[];
@@ -142,8 +139,10 @@ const UserResultCard = ({
     <button
       type="button"
       onClick={onToggle}
-      className={`flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
-        isExpanded ? 'bg-slate-100' : 'bg-slate-50 hover:bg-slate-100'
+      className={`flex w-full items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left ring-2 ring-transparent transition-all duration-200 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 ${
+        isExpanded
+          ? 'border-indigo-300 bg-indigo-50 shadow-sm ring-indigo-100'
+          : 'border-slate-200 bg-slate-50 hover:bg-slate-100'
       }`}
       aria-expanded={isExpanded}
       aria-controls={detailsId}

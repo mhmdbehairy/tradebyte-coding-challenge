@@ -2,10 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useUserRepos } from './useUserRepos';
 import StatusMessage from '../shared/statusMessage';
 import type { GithubRepo } from '../../types/github';
-
-const isRateLimitError = (incoming: Error | null) =>
-  typeof incoming?.message === 'string' &&
-  incoming.message.toLowerCase().includes('rate limit');
+import { isRateLimitError } from '../../utils/errors';
 
 export interface UserReposListProps {
   username: string | null;
@@ -90,7 +87,7 @@ export const UserReposList = ({ username }: UserReposListProps) => {
   }
 
   if (isInitialLoad) {
-    return <p className="text-sm text-slate-500">Loading repositories...</p>;
+    return <RepoListSkeleton />;
   }
 
   if (!isLoading && !hasRepos) {
@@ -180,3 +177,22 @@ const RepoListItem = ({ repo }: { repo: GithubRepo }) => {
     </li>
   );
 };
+
+const RepoListSkeleton = () => (
+  <div className="space-y-3" aria-live="polite" aria-busy="true" role="status">
+    <span className="sr-only">Loading repositories...</span>
+    {Array.from({ length: 3 }).map((_, index) => (
+      <div
+        key={index}
+        className="flex w-full animate-pulse items-start justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50/80 px-5 py-4 shadow-inner"
+      >
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="h-4 w-1/3 rounded-full bg-slate-200" />
+          <div className="h-3 w-full rounded-full bg-slate-200" />
+          <div className="h-3 w-2/3 rounded-full bg-slate-200" />
+        </div>
+        <div className="h-4 w-10 rounded-full bg-slate-200" />
+      </div>
+    ))}
+  </div>
+);
