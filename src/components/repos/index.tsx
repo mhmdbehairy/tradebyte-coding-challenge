@@ -179,7 +179,13 @@ const RepoListItem = ({ repo }: { repo: GithubRepo }) => {
 };
 
 const RepoListSkeleton = () => (
-  <div className="space-y-3" aria-live="polite" aria-busy="true">
+  <div
+    className="space-y-3"
+    aria-live="polite"
+    aria-busy="true"
+    role="status"
+  >
+    <span className="sr-only">Loading repositories...</span>
     {Array.from({ length: 3 }).map((_, index) => (
       <div
         key={index}
