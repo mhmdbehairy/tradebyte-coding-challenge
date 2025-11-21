@@ -2,13 +2,10 @@ import { lazy, Suspense, useEffect, useMemo, useRef } from 'react';
 import type { GithubUser } from '../../types/github';
 import StatusMessage, { StatusIcon } from '../shared/statusMessage';
 import { useSearchParamState } from '../../hooks/useSearchParamState';
+import { isRateLimitError } from '../../utils/errors';
 
 const UserReposList = lazy(() => import('../repos'));
 const MAX_VISIBLE_USERS = 5;
-
-const isRateLimitError = (incoming: Error | null) =>
-  typeof incoming?.message === 'string' &&
-  incoming.message.toLowerCase().includes('rate limit');
 
 export interface UserSearchResultsProps {
   users: GithubUser[];

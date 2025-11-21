@@ -2,10 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useUserRepos } from './useUserRepos';
 import StatusMessage from '../shared/statusMessage';
 import type { GithubRepo } from '../../types/github';
-
-const isRateLimitError = (incoming: Error | null) =>
-  typeof incoming?.message === 'string' &&
-  incoming.message.toLowerCase().includes('rate limit');
+import { isRateLimitError } from '../../utils/errors';
 
 export interface UserReposListProps {
   username: string | null;
